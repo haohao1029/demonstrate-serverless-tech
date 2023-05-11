@@ -4,12 +4,9 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-fastapi = "*"
-python-multipart = "*"
-uvicorn = "*"
-pydantic = "*"
 pika = "*"
 asyncio = "*"
+aio-pika = "*"
 
 [dev-packages]
 

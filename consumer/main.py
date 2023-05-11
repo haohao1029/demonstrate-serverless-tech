@@ -1,21 +1,11 @@
 import pika
 import csv
 import json
+import os
 
 def save_to_csv(data):
-    with open('data.csv', 'a', newline='') as file:
+    with open('data.csv', 'a+', newline='') as file:
         writer = csv.writer(file)
-        if not file.read().strip():
-            headers = [
-                'device_id',
-                'client_id',
-                'created_at',
-                'license_id',
-                'image_frame',
-                'prob',
-                'tags'
-            ]
-            writer.writerow(headers)
         for prediction in data['data']['preds']:
             tags = ','.join(prediction['tags'])
             row = [
@@ -33,9 +23,8 @@ def save_to_csv(data):
 def callback(ch, method, properties, body):
     message = json.loads(body)
     for prediction in message['data']['preds']:
-        if prediction.prob < 0.25:
-            prediction.tags.append('low_prob')
-    
+        if prediction["prob"] < 0.25:
+            prediction['tags'].append('low_prob')
     save_to_csv(message)
     print(f"Received message: {message}")
 
@@ -48,5 +37,11 @@ def consume_queue():
     print('Waiting for messages. To exit, press CTRL+C')
     channel.start_consuming()
 
+# if 'data.csv' does not exist, create it and add the header row
+if os.path.isfile('data.csv') == False:
+    with open('data.csv', 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(['device_id', 'client_id', 'created_at', 'license_id', 'image_frame', 'prob', 'tags'])    
+    
 
 consume_queue()

@@ -8,8 +8,6 @@ from .main import app
 
 client = TestClient(app)
 
-url = "http://localhost:8000/process"  # Assuming the producer is running inside the Docker network
-
 def generate_random_string(length):
     letters = string.ascii_letters + string.digits
     return ''.join(random.choice(letters) for _ in range(length))
@@ -45,7 +43,7 @@ def send_requests():
         request_data = generate_random_request(i)
         headers = {'Content-Type': 'application/json'}
         response = client.post("/process", data=json.dumps(request_data), headers=headers)
-        assert response.status_code == 200
+        assert response.json() == request_data
 
 def test_main():
     send_requests()

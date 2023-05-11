@@ -10,6 +10,8 @@ uvicorn = "*"
 pydantic = "*"
 pika = "*"
 asyncio = "*"
+pytest = "*"
+httpx = "*"
 
 [dev-packages]
 

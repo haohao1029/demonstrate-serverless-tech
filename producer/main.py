@@ -40,7 +40,7 @@ def push_to_queue(message):
 async def process_data(payload: Payload):
     try:
         push_to_queue(payload.dict())
-        return {'message': 'Data saved successfully'}
+        return payload
     except HTTPException:
         raise  # Re-raise the exception to let FastAPI handle it
     except Exception as e:

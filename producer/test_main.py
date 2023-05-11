@@ -1,14 +1,24 @@
-import requests
+from fastapi.testclient import TestClient
 import json
 import random
+import string
+from datetime import datetime
+
+from .main import app
+
+client = TestClient(app)
+
+def generate_random_string(length):
+    letters = string.ascii_letters + string.digits
+    return ''.join(random.choice(letters) for _ in range(length))
 
 def generate_random_request(count):
 
     # Generate random data for the request body
     request_data = {
-        "device_id": f"device_{count}_id",
-        "client_id": f"client_{count}_id",
-        "created_at": "2023-02-07 14:56:49.386042",
+        'device_id': generate_random_string(10),
+        'client_id': generate_random_string(10),
+        'created_at': datetime.now().isoformat(),
         "data": {
             "license_id": "license_id",
             "preds": []
@@ -24,16 +34,20 @@ def generate_random_request(count):
             "tags": []
         }
         request_data["data"]["preds"].append(prediction)
-
+        
     return request_data
 
 def send_requests():
-    url = "http://localhost:8000/process"  # Assuming the producer is running inside the Docker network
 
     for i in range(1000):
         request_data = generate_random_request(i)
         headers = {'Content-Type': 'application/json'}
-        response = requests.post(url, data=json.dumps(request_data), headers=headers)
-        print(f"Response: {response.json()}")
+        response = client.post("/process", data=json.dumps(request_data), headers=headers)
+        assert response.json() == request_data
 
-send_requests()
+def test_main():
+    send_requests()
+
+
+if __name__ == "__main__":
+    test_main()

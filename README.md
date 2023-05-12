@@ -27,7 +27,6 @@ tapway-interview
 ```
 
 ## Project Images
----
 With the docker-compose up --build, rabbimq will be started. producer, consumer and tests will be start only after rabbimq's status become `service-healthy`.
 
 ### RabbitMQ 

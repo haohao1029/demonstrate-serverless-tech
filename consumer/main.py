@@ -30,7 +30,7 @@ def callback(ch, method, properties, body):
 
 
 def consume_queue():
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+    connection = pika.BlockingConnection(pika.ConnectionParameters(os.getenv("RABBITMQ_HOST", 'localhost')))
     channel = connection.channel()
     channel.queue_declare(queue='predictions')
     channel.basic_consume(queue='predictions', on_message_callback=callback, auto_ack=True)

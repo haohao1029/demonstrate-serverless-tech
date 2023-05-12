@@ -21,19 +21,29 @@ def save_to_csv(data):
 
 
 def callback(ch, method, properties, body):
-    message = json.loads(body)
-    for prediction in message['data']['preds']:
-        if prediction["prob"] < 0.25:
-            prediction['tags'].append('low_prob')
-    save_to_csv(message)
-    print(f"Received message: {message}")
+    try:
+        message = json.loads(body)
+        for prediction in message['data']['preds']:
+            if prediction["prob"] < 0.25:
+                prediction['tags'].append('low_prob')
+        save_to_csv(message)
+        print(f"Received message: {message}")
+        ch.basic_ack(delivery_tag=method.delivery_tag)
+    except Exception as e:
+        print(e)
+        if method.delivery_tag > 5:
+            ch.basic_ack(delivery_tag=method.delivery_tag)
+        else:
+            ch.basic_nack(delivery_tag=method.delivery_tag, requeue=True)
+            print(f"Requeueing message: {message}")
+            
 
 
 def consume_queue():
     connection = pika.BlockingConnection(pika.ConnectionParameters(os.getenv("RABBITMQ_HOST", 'localhost')))
     channel = connection.channel()
     channel.queue_declare(queue='predictions')
-    channel.basic_consume(queue='predictions', on_message_callback=callback, auto_ack=True)
+    channel.basic_consume(queue='predictions', on_message_callback=callback, auto_ack=False)
     print('Waiting for messages. To exit, press CTRL+C')
     channel.start_consuming()
 

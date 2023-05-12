@@ -24,7 +24,6 @@ def generate_random_request(count):
             "preds": []
         }
     }
-
     # Generate random predictions
     preds_per_message = random.randint(1, 10)
     for i in range(preds_per_message):

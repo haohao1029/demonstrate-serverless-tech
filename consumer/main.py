@@ -5,7 +5,7 @@ import os
 
 def save_to_csv(data):
     with open('data.csv', 'a+', newline='') as file:
-        writer = csv.writer(file)
+        writer = csv.writer(file, delimiter=";")
         for prediction in data['data']['preds']:
             tags = ','.join(prediction['tags'])
             row = [
@@ -30,7 +30,7 @@ def callback(ch, method, properties, body):
 
 
 def consume_queue():
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+    connection = pika.BlockingConnection(pika.ConnectionParameters(os.getenv("RABBITMQ_HOST", 'localhost')))
     channel = connection.channel()
     channel.queue_declare(queue='predictions')
     channel.basic_consume(queue='predictions', on_message_callback=callback, auto_ack=True)
@@ -40,7 +40,7 @@ def consume_queue():
 # if 'data.csv' does not exist, create it and add the header row
 if os.path.isfile('data.csv') == False:
     with open('data.csv', 'w', newline='') as file:
-        writer = csv.writer(file)
+        writer = csv.writer(file, delimiter=";")
         writer.writerow(['device_id', 'client_id', 'created_at', 'license_id', 'image_frame', 'prob', 'tags'])    
     
 

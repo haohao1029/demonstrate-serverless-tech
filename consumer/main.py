@@ -3,8 +3,10 @@ import csv
 import json
 import os
 
+csv_path = './data/data.csv'
+
 def save_to_csv(data):
-    with open('data.csv', 'a+', newline='') as file:
+    with open(csv_path, 'a+', newline='') as file:
         writer = csv.writer(file, delimiter=";")
         for prediction in data['data']['preds']:
             tags = ','.join(prediction['tags'])
@@ -48,8 +50,8 @@ def consume_queue():
     channel.start_consuming()
 
 # if 'data.csv' does not exist, create it and add the header row
-if os.path.isfile('data.csv') == False:
-    with open('data.csv', 'w', newline='') as file:
+if os.path.isfile(csv_path) == False:
+    with open(csv_path, 'w', newline='') as file:
         writer = csv.writer(file, delimiter=";")
         writer.writerow(['device_id', 'client_id', 'created_at', 'license_id', 'image_frame', 'prob', 'tags'])    
     

@@ -24,6 +24,8 @@ services:
         condition: service_healthy
     environment:
       RABBITMQ_HOST: rabbitmq
+    volumes:
+      - data-volume:/app/data
   tests:
     build: 
       context: ./producer
@@ -33,6 +35,8 @@ services:
         condition: service_healthy
     environment:
       RABBITMQ_HOST: rabbitmq
+    volumes:
+      - data-volume:/app/data
     command: pytest
   consumer:
     build: 
@@ -43,4 +47,8 @@ services:
         condition: service_healthy
     environment:
       RABBITMQ_HOST: rabbitmq
+    volumes:
+      - data-volume:/app/data
   
+volumes:
+  data-volume:

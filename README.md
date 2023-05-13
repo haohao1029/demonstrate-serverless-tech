@@ -46,7 +46,9 @@ Producer have a `/process` POST API to publish message into RabbitMQ, the API wi
 ### Consumer 
 Consumer subscribed to rabbitmq channel, preprocess it and append it into csv file. The delimiter used for csv is ";" because "tags" column is using "," to seperate multiple tags.
 
-Manual acknowledgement is employed to prevent `data loss` due to the `consumers fail or loss connection`, however it has `lower throughput` compare to automatic acknowledgement.
+**aio_pika** and **asyncio** are used for concurrent purpose to consume message faster
+
+**Manual acknowledgement**  is employed to prevent `data loss` due to the `consumers fail or loss connection`, however it has `lower throughput` compare to automatic acknowledgement.
 
 ### Tests
 Tests container will run the `test_main.py` file in producer by using `pytest`. It will call 1,000 APIs with `1~10 preds per API call` to producer API and producer message into RabbitMQ.

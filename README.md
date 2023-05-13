@@ -9,6 +9,7 @@ docker-compose down -v
 
 > If you try to rerun `docker-compose up` without `docker-compose down -v`, the test container will fail due `preds_per_message * number_message` is **not match** with `csv_count`.
 
+![demo](./assets/demo.gif)
 ## Project Structure
 ``` bash
 tapway-interview

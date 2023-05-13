@@ -63,7 +63,7 @@ async def consume_queue():
 
 if __name__ == "__main__":
     if os.path.isfile(csv_path) == False:
-        with open('data.csv', 'w', newline='') as file:
+        with open(csv_path, 'w', newline='') as file:
             writer = csv.writer(file, delimiter=";")
             writer.writerow(['device_id', 'client_id', 'created_at', 'license_id', 'image_frame', 'prob', 'tags'])    
     asyncio.run(consume_queue())

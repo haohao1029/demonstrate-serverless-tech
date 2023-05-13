@@ -3,7 +3,11 @@
 ## How To Run
 ``` bash
 docker-compose up --build
+
+docker-compose down -v
 ```
+
+> If you try to rerun `docker-compose up` without `docker-compose down -v`, the test container will fail due `preds_per_message * number_message` is **not match** with `csv_count`.
 
 ## Project Structure
 ``` bash
@@ -33,6 +37,9 @@ With the docker-compose up --build, rabbimq will be started. producer, consumer 
 ### RabbitMQ 
 rabbitmq:3-management-alpine was pulled and started
 
+### Volume
+The .csv file is stored in `data-volume` volume, every container including `Tests` container.
+
 ### Producer 
 Producer have a `/process` POST API to publish message into RabbitMQ, the API will instance return status code 200 once the message is publish to the RabbitMQ.
 
@@ -43,4 +50,3 @@ Manual acknowledgement is employed to prevent `data loss` due to the `consumers 
 
 ### Tests
 Tests container will run the `test_main.py` file in producer by using `pytest`. It will call 1,000 APIs with `1~10 preds per API call` to producer API and producer message into RabbitMQ.
-

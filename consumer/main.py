@@ -4,10 +4,11 @@ import csv
 import json
 import os
 
+csv_path = './data/data.csv'
 lock = asyncio.Lock()
 
 def save_to_csv(data):
-    with open('data.csv', 'a+', newline='') as file:
+    with open(csv_path, 'a+', newline='') as file:
         writer = csv.writer(file, delimiter=";")
         for prediction in data['data']['preds']:
             tags = ','.join(prediction['tags'])
@@ -61,9 +62,8 @@ async def consume_queue():
         await connection.close()
 
 if __name__ == "__main__":
-    if os.path.isfile('data.csv') == False:
+    if os.path.isfile(csv_path) == False:
         with open('data.csv', 'w', newline='') as file:
             writer = csv.writer(file, delimiter=";")
             writer.writerow(['device_id', 'client_id', 'created_at', 'license_id', 'image_frame', 'prob', 'tags'])    
-
     asyncio.run(consume_queue())

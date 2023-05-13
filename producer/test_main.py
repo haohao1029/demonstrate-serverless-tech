@@ -37,16 +37,22 @@ def generate_random_request(count):
     return request_data
 
 def send_requests():
-
+    total_count = 0
     for i in range(1000):
         request_data = generate_random_request(i)
+        total_count += len(request_data["data"]["preds"])
         headers = {'Content-Type': 'application/json'}
         response = client.post("/process", data=json.dumps(request_data), headers=headers)
         assert response.json() == request_data
+    assert retrieve_data() == total_count
+    
+def retrieve_data():
+    with open('./data/data.csv', 'r') as file:
+        lines = file.readlines()
+        return len(lines) - 1
 
 def test_main():
     send_requests()
-
 
 if __name__ == "__main__":
     test_main()

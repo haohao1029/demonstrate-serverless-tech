@@ -1,7 +1,10 @@
-import pika
+import asyncio
+import aio_pika
 import csv
 import json
 import os
+
+lock = asyncio.Lock()
 
 def save_to_csv(data):
     with open('data.csv', 'a+', newline='') as file:
@@ -19,39 +22,48 @@ def save_to_csv(data):
             ]
             writer.writerow(row)
 
+async def callback(
+    message: aio_pika.abc.AbstractIncomingMessage,
+) -> None:
+    async with message.process():
+        try:
+            print(" [x] Received %r" % message.body)
+            data = json.loads(message.body)
+            async with lock:
+                for prediction in data['data']['preds']:
+                    if prediction["prob"] < 0.25:
+                        prediction['tags'].append('low_prob')
+                save_to_csv(data)
+                message.ack()
+        except Exception as e:
+            print(e)
+            if message.delivery_tag < 5:
+                # log the message
+                message.nack(requeue=True)
+                print(f"Requeueing message: {data}")
+            else:
+                message.reject()
 
-def callback(ch, method, properties, body):
-    try:
-        message = json.loads(body)
-        for prediction in message['data']['preds']:
-            if prediction["prob"] < 0.25:
-                prediction['tags'].append('low_prob')
-        save_to_csv(message)
-        print(f"Received message: {message}")
-        ch.basic_ack(delivery_tag=method.delivery_tag)
-    except Exception as e:
-        print(e)
-        if method.delivery_tag > 5:
-            ch.basic_ack(delivery_tag=method.delivery_tag)
-        else:
-            ch.basic_nack(delivery_tag=method.delivery_tag, requeue=True)
-            print(f"Requeueing message: {message}")
-            
+async def consume_queue():
+    connection = await aio_pika.connect_robust(
+         "amqp://guest:guest@" + os.getenv("RABBITMQ_HOST", 'localhost')
+    )
+    channel = await connection.channel()
+    await channel.set_qos(prefetch_count=100)
+    queue = await channel.declare_queue('predictions', auto_delete=False)
+    await queue.consume(callback)
 
-
-def consume_queue():
-    connection = pika.BlockingConnection(pika.ConnectionParameters(os.getenv("RABBITMQ_HOST", 'localhost')))
-    channel = connection.channel()
-    channel.queue_declare(queue='predictions')
-    channel.basic_consume(queue='predictions', on_message_callback=callback, auto_ack=False)
     print('Waiting for messages. To exit, press CTRL+C')
-    channel.start_consuming()
+    try:
+        # Wait until terminate
+        await asyncio.Future()
+    finally:
+        await connection.close()
 
-# if 'data.csv' does not exist, create it and add the header row
-if os.path.isfile('data.csv') == False:
-    with open('data.csv', 'w', newline='') as file:
-        writer = csv.writer(file, delimiter=";")
-        writer.writerow(['device_id', 'client_id', 'created_at', 'license_id', 'image_frame', 'prob', 'tags'])    
-    
+if __name__ == "__main__":
+    if os.path.isfile('data.csv') == False:
+        with open('data.csv', 'w', newline='') as file:
+            writer = csv.writer(file, delimiter=";")
+            writer.writerow(['device_id', 'client_id', 'created_at', 'license_id', 'image_frame', 'prob', 'tags'])    
 
-consume_queue()
+    asyncio.run(consume_queue())

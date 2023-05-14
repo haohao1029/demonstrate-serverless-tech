@@ -26,24 +26,23 @@ def save_to_csv(data):
 async def callback(
     message: aio_pika.abc.AbstractIncomingMessage,
 ) -> None:
-    async with message.process():
-        try:
-            print(" [x] Received %r" % message.body)
-            data = json.loads(message.body)
-            async with lock:
-                for prediction in data['data']['preds']:
-                    if prediction["prob"] < 0.25:
-                        prediction['tags'].append('low_prob')
-                save_to_csv(data)
-                message.ack()
-        except Exception as e:
-            print(e)
-            if message.delivery_tag < 5:
-                # log the message
-                message.nack(requeue=True)
-                print(f"Requeueing message: {data}")
-            else:
-                message.reject()
+    try:
+        print(" [x] Received %r" % message.body)
+        data = json.loads(message.body)
+        async with lock:
+            for prediction in data['data']['preds']:
+                if prediction["prob"] < 0.25:
+                    prediction['tags'].append('low_prob')
+            save_to_csv(data)
+            await message.ack()
+    except Exception as e:
+        print(message.delivery_tag)
+        if message.delivery_tag < 5:
+            # log the message
+            await message.nack(requeue=True)
+            print(f"Requeueing message: {data['device_id']}")        
+        else:
+            await message.reject()
 
 async def consume_queue():
     connection = await aio_pika.connect_robust(

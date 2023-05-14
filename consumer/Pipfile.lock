@@ -18,19 +18,19 @@
     "default": {
         "aio-pika": {
             "hashes": [
-                "sha256:116a4ed76dff3c7cc0bf556a7803d64fb2aa17ef035b9c121fb776c7fffbff0b",
-                "sha256:85456c08b86ffea96cdcf2daff587563a3d45ea00fcedae65fa954957b6982a4"
+                "sha256:e89fc7a60c1294260defc3ec8eda5d9d75a886a3855192914baf34ab0a0fada9",
+                "sha256:f53059edeed5b24af5df1213014c7bef9b8200930c7527a1125b408f93a8d3a6"
             ],
             "index": "pypi",
-            "version": "==9.0.6"
+            "version": "==9.0.7"
         },
         "aiormq": {
             "hashes": [
-                "sha256:b5249b6bc04b21e79ffeb049667b134128e187aaaafd06d84587aead19aeddb2",
-                "sha256:f4d4f3859c044b16c3a221755eca9c0393d283e286f238db343560af9d4b4728"
+                "sha256:ccf495e3da2849be37ba802389839ac7a6f18cf58f2b7d5f2cc4eb21e2dbc564",
+                "sha256:da53ec26aeecdccda8dab7947f391c9b53943f7dd45c0fc4b515971e7fc320cf"
             ],
             "markers": "python_version >= '3.7' and python_version < '4.0'",
-            "version": "==6.7.4"
+            "version": "==6.7.6"
         },
         "asyncio": {
             "hashes": [

@@ -6,7 +6,7 @@ import json
 import logging
 import os
 
-app = FastAPI()
+
 
 class Prediction(BaseModel):
     image_frame: str
@@ -23,13 +23,14 @@ class Payload(BaseModel):
     created_at: str
     data: Data
 
+app = FastAPI()
+connection = pika.BlockingConnection(pika.ConnectionParameters(os.getenv("RABBITMQ_HOST", 'localhost')))
+channel = connection.channel()
+channel.queue_declare(queue='predictions')
+
 def push_to_queue(message):
     try:
-        connection = pika.BlockingConnection(pika.ConnectionParameters(os.getenv("RABBITMQ_HOST", 'localhost')))
-        channel = connection.channel()
-        channel.queue_declare(queue='predictions')
         channel.basic_publish(exchange='', routing_key='predictions', body=json.dumps(message))
-        connection.close()
     except Exception as e:
         logging.error(f"Failed to push message to the queue: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to push message to the queue")

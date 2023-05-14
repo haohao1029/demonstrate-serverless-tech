@@ -3,9 +3,10 @@ import aio_pika
 import csv
 import json
 import os
-
-csv_path = './data/data.csv'
+from handle_mq_exception import retry_message, push_to_dead_letter_queue 
+csv_path = './data.csv'
 lock = asyncio.Lock()
+queue_name = 'predictions'
 
 def save_to_csv(data):
     with open(csv_path, 'a+', newline='') as file:
@@ -22,6 +23,7 @@ def save_to_csv(data):
                 tags
             ]
             writer.writerow(row)
+            
 
 async def callback(
     message: aio_pika.abc.AbstractIncomingMessage,
@@ -33,24 +35,30 @@ async def callback(
             for prediction in data['data']['preds']:
                 if prediction["prob"] < 0.25:
                     prediction['tags'].append('low_prob')
+            raise Exception("Something went wrong")
             save_to_csv(data)
-            await message.ack()
     except Exception as e:
-        print(message.delivery_tag)
-        if message.delivery_tag < 5:
-            # log the message
-            await message.nack(requeue=True)
-            print(f"Requeueing message: {data['device_id']}")        
+        retry_count = message.headers.get('retry_count', 0)
+        print(message.info())
+        if retry_count < 3:
+            await retry_message(message, retry_count)
         else:
-            await message.reject()
+            # Dead-letter the message
+            print("Rejecting message...")
+            await push_to_dead_letter_queue(message)
+            print("Message moved to dead letter queue:", message.body)
+    finally:
+        await message.ack()
+
+
+
 
 async def consume_queue():
     connection = await aio_pika.connect_robust(
          "amqp://guest:guest@" + os.getenv("RABBITMQ_HOST", 'localhost')
     )
     channel = await connection.channel()
-    await channel.set_qos(prefetch_count=100)
-    queue = await channel.declare_queue('predictions', auto_delete=False)
+    queue = await channel.declare_queue(queue_name, auto_delete=False)
     await queue.consume(callback)
 
     print('Waiting for messages. To exit, press CTRL+C')

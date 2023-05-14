@@ -6,8 +6,6 @@ import json
 import logging
 import os
 
-
-
 class Prediction(BaseModel):
     image_frame: str
     prob: float

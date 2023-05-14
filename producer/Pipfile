@@ -9,7 +9,6 @@ python-multipart = "*"
 uvicorn = "*"
 pydantic = "*"
 pika = "*"
-asyncio = "*"
 pytest = "*"
 httpx = "*"
 

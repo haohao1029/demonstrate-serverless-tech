@@ -44,6 +44,7 @@ def send_requests():
         headers = {'Content-Type': 'application/json'}
         response = client.post("/process", data=json.dumps(request_data), headers=headers)
         assert response.json() == request_data
+    print(total_count)
     assert retrieve_data() == total_count
     
 def retrieve_data():

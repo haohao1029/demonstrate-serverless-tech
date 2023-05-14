@@ -67,5 +67,5 @@ pytest
 It will call 1,000 APIs with `1~10 preds` per API call to producer API and producer message into RabbitMQ.
 
 ## Problems
-**Producer Code All In One**: I unable to seperate the files and make them more strcutures due to some glitch. FastAPIs will prompt error when `from model import Payload`, pytest will prompt error when `from .model import Payload`
-**RabbitMQ Publisher Connection / Performance Issue**: Initialize the rabbitmq connection will timeout if too long no using rabbitmq call. But connect to rabbitmq every api call could drains the performance down
+- **Producer Code All In One**: I unable to seperate the files and make them more strcutures due to some glitch. FastAPIs will prompt error when `from model import Payload`, pytest will prompt error when `from .model import Payload`
+- **RabbitMQ Publisher Connection / Performance Issue**: Initialize the rabbitmq connection will timeout if too long no using rabbitmq call. But connect to rabbitmq every api call could drains the performance down

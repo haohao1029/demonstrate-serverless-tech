@@ -11,24 +11,32 @@ docker-compose down -v
 
 ![demo](./assets/demo.gif)
 ## Project Structure
-``` bash
+```bash
 tapway-interview
+├─ README.md
+├─ assets
+│  └─ demo.gif
 ├─ consumer
 │  ├─ Dockerfile
-│  ├─ main.py
 │  ├─ Pipfile
 │  ├─ Pipfile.lock
+│  ├─ __init__.py
+│  ├─ data.csv
+│  ├─ handle_mq_exception.py
+│  ├─ main.py
 │  └─ requirements.txt
 ├─ docker-compose.yml
-├─ producer
-│  ├─ Dockerfile
-│  ├─ main.py
-│  ├─ Pipfile
-│  ├─ Pipfile.lock
-│  ├─ requirements.txt
-│  ├─ test_main.py
-│  └─ __init__.py
-└─ README.md
+└─ producer
+   ├─ .pytest_cache
+   │  ├─ CACHEDIR.TAG
+   │  └─ README.md
+   ├─ Dockerfile
+   ├─ Pipfile
+   ├─ Pipfile.lock
+   ├─ __init__.py
+   ├─ main.py
+   ├─ requirements.txt
+   └─ test_main.py
 
 ```
 
@@ -52,4 +60,12 @@ Consumer subscribed to rabbitmq channel, preprocess it and append it into csv fi
 **Manual acknowledgement**  is employed to prevent `data loss` due to the `consumers fail or loss connection`, however it has `lower throughput` compare to automatic acknowledgement.
 
 ### Tests
-Tests container will run the `test_main.py` file in producer by using `pytest`. It will call 1,000 APIs with `1~10 preds per API call` to producer API and producer message into RabbitMQ.
+Tests container will run the `test_main.py` file in producer by using 
+```bash
+pytest
+```
+It will call 1,000 APIs with `1~10 preds` per API call to producer API and producer message into RabbitMQ.
+
+## Problems
+**Producer Code All In One**: I unable to seperate the files and make them more strcutures due to some glitch. FastAPIs will prompt error when `from model import Payload`, pytest will prompt error when `from .model import Payload`
+**RabbitMQ Publisher Connection / Performance Issue**: Initialize the rabbitmq connection will timeout if too long no using rabbitmq call. But connect to rabbitmq every api call could drains the performance down

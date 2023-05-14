@@ -1,13 +1,26 @@
+# TABLE OF CONTENTS
+# 1. Imports
+# 2. Initialize variables and Lock
+# 3. Function
+# save message data to csv
+# 4. Callback Preprocessing
+# 5. Main consume_queue
+
+# 1. Imports
 import asyncio
 import aio_pika
 import csv
 import json
 import os
 from handle_mq_exception import retry_message, push_to_dead_letter_queue 
-csv_path = './data/data.csv'
+
+# 2. Initialize variables and Lock
+csv_path = './data.csv'
 lock = asyncio.Lock()
 queue_name = 'predictions'
 
+# 3. Function
+# save message data to csv
 def save_to_csv(data):
     with open(csv_path, 'a+', newline='') as file:
         writer = csv.writer(file, delimiter=";")
@@ -24,7 +37,7 @@ def save_to_csv(data):
             ]
             writer.writerow(row)
             
-
+# 4. Callback Preprocessing 
 async def callback(
     message: aio_pika.abc.AbstractIncomingMessage,
 ) -> None:
@@ -51,7 +64,7 @@ async def callback(
 
 
 
-
+# 5. Main consume_queue
 async def consume_queue():
     connection = await aio_pika.connect_robust(
          "amqp://guest:guest@" + os.getenv("RABBITMQ_HOST", 'localhost')

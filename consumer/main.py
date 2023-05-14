@@ -35,7 +35,6 @@ async def callback(
             for prediction in data['data']['preds']:
                 if prediction["prob"] < 0.25:
                     prediction['tags'].append('low_prob')
-            raise Exception("Something went wrong")
             save_to_csv(data)
     except Exception as e:
         retry_count = message.headers.get('retry_count', 0)

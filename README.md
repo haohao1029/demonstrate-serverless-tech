@@ -66,7 +66,7 @@ Tests container will run the `test_main.py` file in producer by using
 ```bash
 pytest
 ```
-It will call 1,000 APIs with `1~10 preds` per API call to producer API and producer message into RabbitMQ. Tt able to call 1,000 apis and data will be preprocessed and stored within 4.56s.
+It will call 1,000 APIs with `1~10 preds` per API call to producer API and producer message into RabbitMQ. Tt able to call 1,000 apis and data will be preprocessed and stored within 6s.
 
 
 ![apis performance](assets/1000_api_call_performance.png) 

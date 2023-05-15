@@ -1,7 +1,7 @@
 # tapway-interview
 First and foremost, I would like to express my sincere gratitude to Tapway for providing me with the opportunity to complete the take-home assessment for the Python Backend Developer position. It was an enriching experience, and I am grateful for the chance to showcase my skills and knowledge.
 
-This project demonstrate a high performance docker compose fastapi, rabbitmq producer and async consumer microservice.
+This project demonstrate a docker compose fastapi, rabbitmq producer and async consumer microservice.
 - Users post an api to FastAPI 
 - FastAPI produce a message into message 
 - Consumer using asyncio.run to consume the message, process and save into csv

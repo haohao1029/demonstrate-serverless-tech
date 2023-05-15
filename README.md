@@ -12,8 +12,31 @@ This project demonstrate a docker compose fastapi, rabbitmq producer and async c
 docker-compose up --build
 
 docker-compose down -v
-```
 
+```
+```bash
+curl -X POST -H "Content-Type: application/json" -d '{
+    "device_id": "your_device_id",
+    "client_id": "your_client_id",
+    "created_at": "2023-02-07 14:56:49.386042",
+    "data": {
+        "license_id": "your_license_id",
+        "preds": [
+            {
+                "image_frame": "your_base64_string",
+                "prob": 0.75,
+                "tags": ["tag1", "tag2"]
+            },
+            {
+                "image_frame": "another_base64_string",
+                "prob": 0.85,
+                "tags": ["tag3", "tag4"]
+            }
+        ]
+    }
+}' http://localhost:8000/process
+
+```
 > If you try to rerun `docker-compose up` without `docker-compose down -v`, the test container will fail due `preds_per_message * number_message` is **not match** with `csv_count`.
 
 > No worries about missing heartbeats from client error in rabbitmq, it will eventually restart the connection once users call APIs

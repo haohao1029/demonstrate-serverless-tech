@@ -1,3 +1,4 @@
 pika
 asyncio
 aio_pika 
+pytest

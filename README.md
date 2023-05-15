@@ -1,6 +1,12 @@
 # tapway-interview
 First and foremost, I would like to express my sincere gratitude to Tapway for providing me with the opportunity to complete the take-home assessment for the Python Backend Developer position. It was an enriching experience, and I am grateful for the chance to showcase my skills and knowledge.
 
+This project demonstrate a high performance docker compose fastapi, rabbitmq producer and async consumer microservice.
+- Users post an api to FastAPI 
+- FastAPI produce a message into message 
+- Consumer using asyncio.run to consume the message, process and save into csv
+- Several tests are perform to test about the performance of overall project and consumer
+
 ## How To Run
 ``` bash
 docker-compose up --build
@@ -78,6 +84,9 @@ Tests container will run the `test_main.py` file in producer by using
 pytest
 ```
 It will call 1,000 APIs with `1~10 preds` per API call to producer API and producer message into RabbitMQ. Tt able to call 1,000 apis and data will be preprocessed and stored within 6s.
+
+### Tests-Consumer
+As same as `Tests` it run test_main.py to start testing. But the key different is it only test the performance of consumer. Tests-consumer uses `MagicMock(spec=aio_pika.IncomingMessage)` and consume the mock data directly without publish.
 
 
 ![apis performance](assets/1000_api_call_performance.png) 

@@ -9,6 +9,8 @@ docker-compose down -v
 
 > If you try to rerun `docker-compose up` without `docker-compose down -v`, the test container will fail due `preds_per_message * number_message` is **not match** with `csv_count`.
 
+> No worries about missing heartbeats from client error in rabbitmq, it will eventually restart the connection once users call APIs
+
 > After running all thing, you could go into `producer` or `consumer` to check about csv data.
 ```bash
 ls data
@@ -79,3 +81,5 @@ It will call 1,000 APIs with `1~10 preds` per API call to producer API and produ
 ![apis performance](assets/1000_api_call_performance.png) 
 
 ![consumer_performance](assets/consumer_performance.png)
+
+

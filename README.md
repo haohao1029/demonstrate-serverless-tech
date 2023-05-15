@@ -13,6 +13,7 @@ docker-compose down -v
 
 > After running all thing, you could go into `producer` or `consumer` to check about csv data.
 ```bash
+docker-compose exec consumer sh
 ls data
 cd data
 cat data.csv

@@ -1,4 +1,5 @@
 # tapway-interview
+First and foremost, I would like to express my sincere gratitude to Tapway for providing me with the opportunity to complete the take-home assessment for the Python Backend Developer position. It was an enriching experience, and I am grateful for the chance to showcase my skills and knowledge.
 
 ## How To Run
 ``` bash

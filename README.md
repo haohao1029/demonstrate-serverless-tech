@@ -70,3 +70,4 @@ It will call 1,000 APIs with `1~10 preds` per API call to producer API and produ
 
 
 ![apis performance](assets/1000_api_call_performance.png) 
+

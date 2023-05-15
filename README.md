@@ -9,6 +9,13 @@ docker-compose down -v
 
 > If you try to rerun `docker-compose up` without `docker-compose down -v`, the test container will fail due `preds_per_message * number_message` is **not match** with `csv_count`.
 
+> After running all thing, you could go into `producer` or `consumer` to check about csv data.
+```bash
+ls data
+cd data
+cat data.csv
+cat test_data.csv
+```
 
 ![demo](./assets/demo.gif)
 

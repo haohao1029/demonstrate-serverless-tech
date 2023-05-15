@@ -15,7 +15,7 @@ import os
 from handle_mq_exception import retry_message, push_to_dead_letter_queue 
 
 # 2. Initialize variables and Lock
-csv_path = './data.csv'
+csv_path = './data/data.csv'
 lock = asyncio.Lock()
 queue_name = 'predictions'
 

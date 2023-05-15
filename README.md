@@ -9,11 +9,14 @@ docker-compose down -v
 
 > If you try to rerun `docker-compose up` without `docker-compose down -v`, the test container will fail due `preds_per_message * number_message` is **not match** with `csv_count`.
 
+
 ![demo](./assets/demo.gif)
+
 ## Project Structure
-```bash
+```
 tapway-interview
 ├─ README.md
+├─ docker-compose.yml
 ├─ assets
 │  └─ demo.gif
 ├─ consumer
@@ -21,11 +24,9 @@ tapway-interview
 │  ├─ Pipfile
 │  ├─ Pipfile.lock
 │  ├─ __init__.py
-│  ├─ data.csv
 │  ├─ handle_mq_exception.py
 │  ├─ main.py
 │  └─ requirements.txt
-├─ docker-compose.yml
 └─ producer
    ├─ .pytest_cache
    │  ├─ CACHEDIR.TAG
@@ -33,11 +34,12 @@ tapway-interview
    ├─ Dockerfile
    ├─ Pipfile
    ├─ Pipfile.lock
-   ├─ __init__.py
    ├─ main.py
+   ├─ model
+   │  ├─ payload.py
+   │  └─ publisher.py
    ├─ requirements.txt
    └─ test_main.py
-
 ```
 
 ## Project Images
@@ -47,7 +49,7 @@ With the docker-compose up --build, rabbimq will be started. producer, consumer 
 rabbitmq:3-management-alpine was pulled and started
 
 ### Volume
-The .csv file is stored in `data-volume` volume, every container including `Tests` container.
+The data.csv file is stored in `data-volume` volume which is `/app/data`, every container including `Tests` container. 
 
 ### Producer 
 Producer have a `/process` POST API to publish message into RabbitMQ, the API will instance return status code 200 once the message is publish to the RabbitMQ.
@@ -64,8 +66,7 @@ Tests container will run the `test_main.py` file in producer by using
 ```bash
 pytest
 ```
-It will call 1,000 APIs with `1~10 preds` per API call to producer API and producer message into RabbitMQ.
+It will call 1,000 APIs with `1~10 preds` per API call to producer API and producer message into RabbitMQ. Tt able to call 1,000 apis and data will be preprocessed and stored within 4.56s.
 
-## Problems
-**Producer Code All In One**: I unable to seperate the files and make them more strcutures due to some glitch. FastAPIs will prompt error when `from model import Payload`, pytest will prompt error when `from .model import Payload`
-**RabbitMQ Publisher Connection / Performance Issue**: Initialize the rabbitmq connection will timeout if too long no using rabbitmq call. But connect to rabbitmq every api call could drains the performance down
+
+![apis performance](assets/1000_api_call_performance.png) 

@@ -16,7 +16,7 @@ import json
 import random
 import string
 from datetime import datetime
-from .main import app
+from main import app
 
 # 2. Initialize TestClient
 client = TestClient(app)

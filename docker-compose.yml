@@ -19,6 +19,8 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
+      tests-consumer:
+        condition: service_completed_successfully
     environment:
       RABBITMQ_HOST: rabbitmq
     volumes:
@@ -30,8 +32,11 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
+      tests-consumer:
+        condition: service_completed_successfully
     environment:
       RABBITMQ_HOST: rabbitmq
+      CSV_FILE: /app/data/data.csv
     volumes:
       - data-volume:/app/data
     command: pytest
@@ -42,10 +47,27 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
+      tests-consumer:
+        condition: service_completed_successfully
     environment:
       RABBITMQ_HOST: rabbitmq
+      CSV_FILE: /app/data/data.csv
     volumes:
       - data-volume:/app/data
-  
+    restart: on-failure
+  tests-consumer:
+    build: 
+      context: ./consumer
+      dockerfile: Dockerfile
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      CSV_FILE: ./data/test_data.csv
+    volumes:
+      - data-volume:/app/data
+    command: pytest
+
 volumes:
   data-volume:

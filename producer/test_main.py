@@ -17,7 +17,7 @@ import random
 import string
 from datetime import datetime
 from main import app
-
+import os
 # 2. Initialize TestClient
 client = TestClient(app)
 
@@ -103,6 +103,6 @@ def generate_random_request(count):
 
 # retrieve_data
 def retrieve_data():
-    with open('./data/data.csv', 'r') as file:
+    with open(os.getenv('CSV_FILE', './data/data.csv'), 'r') as file:
         lines = file.readlines()
         return len(lines) - 1

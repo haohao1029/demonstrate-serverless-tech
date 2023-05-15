@@ -25,12 +25,12 @@ curl -X POST -H "Content-Type: application/json" -d '{
             {
                 "image_frame": "your_base64_string",
                 "prob": 0.75,
-                "tags": ["tag1", "tag2"]
+                "tags": []
             },
             {
                 "image_frame": "another_base64_string",
                 "prob": 0.85,
-                "tags": ["tag3", "tag4"]
+                "tags": []
             }
         ]
     }
@@ -95,7 +95,9 @@ The data.csv file is stored in `data-volume` volume which is `/app/data`, every 
 Producer have a `/process` POST API to publish message into RabbitMQ, the API will instance return status code 200 once the message is publish to the RabbitMQ.
 
 ### Consumer 
-Consumer subscribed to rabbitmq channel, preprocess it and append it into csv file. The delimiter used for csv is ";" because "tags" column is using "," to seperate multiple tags.
+Consumer subscribed to rabbitmq channel, preprocess it and append it into csv file. The delimiter used for csv is ";" because "tags" column is using "," to seperate multiple tags. 
+
+If the prob field is less than 0.25, append the tag low_prob in the tags list.
 
 **aio_pika** and **asyncio** are used for concurrent purpose to consume message faster
 

@@ -37,7 +37,7 @@ curl -X POST -H "Content-Type: application/json" -d '{
 }' http://localhost:8000/process
 
 ```
-> If you try to rerun `docker-compose up` without `docker-compose down -v`, the test container will fail due `preds_per_message * number_message` is **not match** with `csv_count`.
+> If you try to rerun `docker-compose up` without `docker-compose down -v`, the test case in test container will fail due `preds_per_message * number_message` is **not match** with `csv_count`.
 
 > No worries about missing heartbeats from client error in rabbitmq, it will eventually restart the connection once users call APIs
 
